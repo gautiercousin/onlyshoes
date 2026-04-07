@@ -1,0 +1,78 @@
+# FROM: image de base à utiliser (PHP 8.3 avec Apache déjà installé)
+FROM docker.io/library/php:8.3-apache AS web
+
+# FROM: image de base pour Composer (gestionnaire de dépendances PHP)
+FROM docker.io/library/composer:latest AS composer
+
+# Revenir à l'image PHP/Apache pour l'installation des dépendances
+FROM web
+
+# Installation des dépendances système (bibliothèques C nécessaires pour PHP)
+RUN apt-get update && apt-get install -y \
+    libpq-dev \
+    libzip-dev \
+    libicu-dev \
+    zip \
+    unzip \
+    git \
+    curl \
+    build-essential \
+    && rm -rf /var/lib/apt/lists/*
+
+# Installation des extensions PHP
+RUN docker-php-ext-install \
+    pdo \
+    pdo_pgsql \
+    pgsql \
+    zip \
+    intl \
+    mysqli \
+    pdo_mysql
+
+# Activation des modules Apache
+RUN a2enmod rewrite headers
+
+# Configuration de PHP
+RUN mv "$PHP_INI_DIR/php.ini-development" "$PHP_INI_DIR/php.ini"
+RUN echo "upload_max_filesize = 50M" >> "$PHP_INI_DIR/php.ini" \
+    && echo "post_max_size = 50M" >> "$PHP_INI_DIR/php.ini" \
+    && echo "memory_limit = 256M" >> "$PHP_INI_DIR/php.ini" \
+    && echo "max_execution_time = 300" >> "$PHP_INI_DIR/php.ini"
+
+# Installation de Composer
+COPY --from=composer /usr/bin/composer /usr/bin/composer
+
+# Copier la configuration Apache et le code source
+COPY config/apache/ /etc/apache2/sites-available-templates/
+COPY src/ /src/
+WORKDIR /src/codeigniter
+RUN composer install --no-interaction --prefer-dist --optimize-autoloader
+WORKDIR /var/www/html
+
+# FIX: Set proper permissions immediately after copying
+RUN chown -R www-data:www-data /src \
+    && find /src -type d -exec chmod 755 {} \; \
+    && find /src -type f -exec chmod 644 {} \;
+
+# Create writable directories with proper permissions
+RUN mkdir -p /src/codeigniter/writable/cache \
+    /src/codeigniter/writable/logs \
+    /src/codeigniter/writable/session \
+    /src/codeigniter/writable/uploads \
+    && chmod -R 777 /src/codeigniter/writable \
+    && chown -R www-data:www-data /src/codeigniter/writable
+
+# Copier le script d'entrypoint
+COPY docker/entrypoint.sh /usr/local/bin/entrypoint.sh
+RUN chmod 755 /usr/local/bin/entrypoint.sh
+
+WORKDIR /var/www/html
+
+# Permissions pour /var/www/html (même si c'est un symlink, au cas où)
+RUN mkdir -p /var/www/html \
+    && chown -R www-data:www-data /var/www/html \
+    && chmod -R 755 /var/www/html
+
+EXPOSE 80
+
+CMD ["/usr/local/bin/entrypoint.sh"]

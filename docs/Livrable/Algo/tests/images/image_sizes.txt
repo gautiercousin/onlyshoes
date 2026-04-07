@@ -1,0 +1,18 @@
+=== Image Size Analysis ===
+Test Date: Thu Jan 15 04:26:14 PM CET 2026
+
+--- All Images (sorted by size) ---
+17K	src/codeigniter/public/assets/products/1768237093_b29c681aeb744d052fe1.jpeg
+20K	src/codeigniter/public/images/annonces/nike-air-max-1.png
+29K	src/codeigniter/public/rounded-logo.webp
+51K	src/codeigniter/public/notfound.webp
+223K	src/codeigniter/public/assets/products/1768332688_081b5876fb89691403d2.jpg
+295K	src/codeigniter/public/assets/products/1768234238_94ae8a50b30931d6195a.png
+
+--- Summary ---
+Total images: 6
+Total size: 644K
+
+--- Images > 100KB ---
+295K	src/codeigniter/public/assets/products/1768234238_94ae8a50b30931d6195a.png
+223K	src/codeigniter/public/assets/products/1768332688_081b5876fb89691403d2.jpg

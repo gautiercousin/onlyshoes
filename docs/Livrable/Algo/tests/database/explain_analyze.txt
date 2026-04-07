@@ -1,0 +1,42 @@
+=== EXPLAIN ANALYZE on Key Queries ===
+Test Date: Thu Jan 15 04:14:33 PM CET 2026
+
+--- Query 1: SELECT annonces with JOINs ---
+ERROR:  column a.statut does not exist
+LINE 7: WHERE a.statut = 'disponible'
+              ^
+HINT:  Perhaps you meant to reference the column "a.etat".
+
+--- Query 2: User lookup by email ---
+                                              QUERY PLAN                                               
+-------------------------------------------------------------------------------------------------------
+ Seq Scan on utilisateur  (cost=0.00..1.12 rows=1 width=152) (actual time=0.018..0.019 rows=0 loops=1)
+   Filter: ((email)::text = 'jean.dupont@email.com'::text)
+   Rows Removed by Filter: 10
+ Planning Time: 1.450 ms
+ Execution Time: 0.055 ms
+(5 rows)
+
+
+--- Query 3: Signalements with JOINs ---
+                                                            QUERY PLAN                                                            
+----------------------------------------------------------------------------------------------------------------------------------
+ Limit  (cost=5.42..5.54 rows=50 width=216) (actual time=0.283..0.288 rows=50 loops=1)
+   ->  Sort  (cost=5.42..5.55 rows=52 width=216) (actual time=0.282..0.284 rows=50 loops=1)
+         Sort Key: s.date DESC
+         Sort Method: quicksort  Memory: 38kB
+         ->  Hash Join  (cost=1.23..3.94 rows=52 width=216) (actual time=0.229..0.248 rows=52 loops=1)
+               Hash Cond: (s.id_utilisateur_auteur = u.id_utilisateur)
+               ->  Seq Scan on signalement s  (cost=0.00..2.52 rows=52 width=204) (actual time=0.206..0.213 rows=52 loops=1)
+               ->  Hash  (cost=1.10..1.10 rows=10 width=28) (actual time=0.011..0.011 rows=10 loops=1)
+                     Buckets: 1024  Batches: 1  Memory Usage: 9kB
+                     ->  Seq Scan on utilisateur u  (cost=0.00..1.10 rows=10 width=28) (actual time=0.004..0.005 rows=10 loops=1)
+ Planning Time: 2.048 ms
+ Execution Time: 0.338 ms
+(12 rows)
+
+
+--- Query 1 (Fixed): SELECT annonces with JOINs ---
+ERROR:  column a.date_creation does not exist
+LINE 8: ORDER BY a.date_creation DESC
+                 ^

@@ -1,0 +1,46 @@
+=== Page Load Time Tests ===
+Test Date: Thu Jan 15 04:11:23 PM CET 2026
+Format: time_total (seconds)
+
+--- / ---
+Run 1: 0.040254s (DNS: 0.000044s, Connect: 0.000167s, TTFB: 0.040205s)
+Run 2: 0.047819s (DNS: 0.000021s, Connect: 0.000167s, TTFB: 0.047230s)
+Run 3: 0.053559s (DNS: 0.000024s, Connect: 0.000159s, TTFB: 0.050954s)
+Run 4: 0.070201s (DNS: 0.000030s, Connect: 0.000528s, TTFB: 0.067360s)
+Run 5: 0.065311s (DNS: 0.000026s, Connect: 0.000467s, TTFB: 0.064906s)
+
+--- /annonces ---
+Run 1: 0.007949s (DNS: 0.000030s, Connect: 0.000466s, TTFB: 0.007898s)
+Run 2: 0.008630s (DNS: 0.000023s, Connect: 0.000393s, TTFB: 0.008580s)
+Run 3: 0.006834s (DNS: 0.000027s, Connect: 0.000508s, TTFB: 0.006777s)
+Run 4: 0.009039s (DNS: 0.000032s, Connect: 0.000648s, TTFB: 0.008987s)
+Run 5: 0.005044s (DNS: 0.000086s, Connect: 0.000304s, TTFB: 0.004988s)
+
+--- /connexion ---
+Run 1: 0.009738s (DNS: 0.000021s, Connect: 0.000120s, TTFB: 0.009675s)
+Run 2: 0.005877s (DNS: 0.000016s, Connect: 0.000106s, TTFB: 0.005817s)
+Run 3: 0.008534s (DNS: 0.000020s, Connect: 0.000124s, TTFB: 0.008480s)
+Run 4: 0.007831s (DNS: 0.000018s, Connect: 0.000116s, TTFB: 0.007778s)
+Run 5: 0.009051s (DNS: 0.000025s, Connect: 0.000156s, TTFB: 0.008888s)
+
+--- /inscription ---
+Run 1: 0.007834s (DNS: 0.000024s, Connect: 0.000367s, TTFB: 0.007751s)
+Run 2: 0.007758s (DNS: 0.000016s, Connect: 0.000111s, TTFB: 0.007644s)
+Run 3: 0.007290s (DNS: 0.000021s, Connect: 0.000137s, TTFB: 0.007231s)
+Run 4: 0.009304s (DNS: 0.000021s, Connect: 0.000139s, TTFB: 0.009245s)
+Run 5: 0.006344s (DNS: 0.000023s, Connect: 0.000146s, TTFB: 0.006279s)
+
+--- /recherche?q=nike ---
+Run 1: 0.118778s (DNS: 0.000029s, Connect: 0.000240s, TTFB: 0.116578s)
+Run 2: 0.077308s (DNS: 0.000037s, Connect: 0.000431s, TTFB: 0.077247s)
+Run 3: 0.090658s (DNS: 0.000017s, Connect: 0.000103s, TTFB: 0.090436s)
+Run 4: 0.090064s (DNS: 0.000018s, Connect: 0.000107s, TTFB: 0.090000s)
+Run 5: 0.069101s (DNS: 0.000018s, Connect: 0.000102s, TTFB: 0.069046s)
+
+--- /api/annonces ---
+Run 1: 0.005856s (DNS: 0.000026s, Connect: 0.000151s, TTFB: 0.005814s)
+Run 2: 0.002655s (DNS: 0.000014s, Connect: 0.000098s, TTFB: 0.002613s)
+Run 3: 0.002729s (DNS: 0.000015s, Connect: 0.000102s, TTFB: 0.002698s)
+Run 4: 0.004093s (DNS: 0.000015s, Connect: 0.000104s, TTFB: 0.004057s)
+Run 5: 0.004600s (DNS: 0.000024s, Connect: 0.000121s, TTFB: 0.004547s)
+

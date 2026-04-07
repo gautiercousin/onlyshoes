@@ -1,0 +1,82 @@
+=== Stored Procedures & Triggers Analysis ===
+Source: database/startup/02-triggers.sql, 03-procedures.sql
+Test Date: Thu Jan 15 04:16:06 PM CET 2026
+
+=== TRIGGERS (12 total) ===
+
+1. trg_marquer_annonce_vendue      - AFTER INSERT ON DETAILLER_COMMANDE - Marque annonce vendue
+2. trg_verif_paiement_valide       - BEFORE INSERT ON COMMANDE - Vérifie paiement validé
+3. trg_verif_modification_commande - BEFORE UPDATE ON COMMANDE - Bloque modif commande livrée
+4. trg_verif_vendeur_acheteur      - BEFORE INSERT ON DETAILLER_COMMANDE - Empêche auto-achat
+5. trg_verif_review_autorisee      - BEFORE INSERT ON REVIEW - Vérifie achat préalable
+6. trg_verif_signalement_integrite - BEFORE INSERT ON SIGNALEMENT - Vérifie cible existe
+7. trg_verif_password_hash         - BEFORE INSERT/UPDATE ON UTILISATEUR - Vérifie bcrypt
+8. trg_verif_admin_action          - BEFORE INSERT ON ADMIN_LOG - Vérifie droits admin
+9. trg_verif_email_format          - BEFORE INSERT/UPDATE ON UTILISATEUR - Valide email regex
+10. trg_verif_modification_status  - BEFORE UPDATE ON UTILISATEUR - Bloque ban admin
+11. trg_review_after_insert/update/delete - Recalcule stats avis vendeur
+12. trg_sales_after_paiement_update - Recalcule montant ventes vendeur
+
+=== STORED PROCEDURES (40+ functions) ===
+
+UTILISATEUR:
+- utilisateur_create(p_data jsonb) -> Crée compte (Exigence 6)
+- utilisateur_read(p_id uuid) -> Lit utilisateur
+- utilisateur_update(p_id uuid, p_data jsonb) -> Modifie infos (Exigence 9)
+- utilisateur_delete(p_id uuid) -> Supprime/anonymise RGPD (Exigence 10)
+- utilisateur_list(p_filters jsonb) -> Liste avec filtres
+- utilisateur_login(p_email, p_password) -> Auth (Exigence 7)
+- utilisateur_get_historique_achats(p_id uuid) -> Historique (Exigence 16)
+
+ADRESSE:
+- adresse_create/read/update/delete/list_by_user
+
+ANNONCE:
+- annonce_create(p_id_vendeur uuid, p_data jsonb) -> Publie (Exigences 20-23)
+- annonce_read(p_id uuid) -> Consulte (Exigence 2)
+- annonce_read_details(p_id uuid) -> Version enrichie avec JOINs
+- annonce_update(p_id uuid, p_data jsonb) -> Modifie (Exigence 21)
+- annonce_delete(p_id uuid) -> Supprime (Exigence 21)
+- annonce_list(p_filters jsonb) -> Recherche/filtre/tri (Exigences 3-4)
+- annonce_list_by_vendeur(p_id_vendeur uuid) -> Annonces vendeur
+- annonce_marquer_indisponible(p_id uuid)
+
+IMAGE:
+- image_create/delete/set_principale/list_by_annonce
+
+COMMANDE:
+- commande_create(p_id_utilisateur uuid, p_articles jsonb, p_montant decimal) -> (Exigence 13)
+- commande_read/read_details/update_statut/annuler/list_by_user
+
+PAIEMENT:
+- paiement_create(p_data jsonb) -> (Exigences 14, 25)
+- paiement_valider/annuler/read
+- paiement_get_info_confirmation(p_id int) -> (Exigences 15, 26)
+
+REVIEW:
+- review_create(p_id_auteur uuid, p_id_vendeur uuid, p_data jsonb) -> (Exigence 19)
+- review_read/update/delete
+- review_list_by_vendeur(p_id_vendeur uuid) -> (Exigence 18)
+
+SIGNALEMENT:
+- signalement_create(p_id_auteur uuid, p_type text, p_id_cible uuid, p_data jsonb) -> (Exigence 29a)
+- signalement_traiter(p_id int, p_decision text, p_raison text) -> (Exigence 32)
+- signalement_list(p_filters jsonb)
+
+CONSENTEMENT (RGPD):
+- consentement_donner/retirer/list_by_user/create -> (Exigence 11)
+
+ADMIN_LOG:
+- admin_log_create(p_id_admin uuid, p_data jsonb) -> (Exigences 29-32)
+- admin_log_list(p_filters jsonb) -> (Exigence 28)
+
+TABLES RÉFÉRENCE:
+- marque_list/couleur_list/materiau_list
+
+STATISTIQUES:
+- vendeur_get_statistiques(p_id_vendeur uuid) -> (Exigence 24)
+
+AI EMBEDDINGS (pgvector):
+- annonce_update_embeddings(p_id_annonce uuid, p_embeddings vector(384))
+- annonce_search_by_embedding(p_search_vector vector(384), p_limit int, p_filters jsonb)
+- annonce_find_similar(p_id_annonce uuid, p_limit int)

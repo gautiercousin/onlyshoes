@@ -1,0 +1,8 @@
+*
+!docker/
+!embeddings/
+!config/
+!src/
+src/codeigniter/writable/
+!database/
+!.env.example

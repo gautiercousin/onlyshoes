@@ -1,0 +1,96 @@
+# Liste des services (conteneurs) à créer
+services:
+  # Serveur Web Apache + PHP
+  web:
+    environment:
+      USER_ID: "${USER_ID}"
+      GROUP_ID: "${GROUP_ID}"
+    # build: construire une image custom depuis un Dockerfile
+    build:
+      context: ..                    # Dossier racine pour le build
+      dockerfile: docker/Dockerfile.web  # Chemin vers le Dockerfile
+    container_name: sae_web          # Nom du conteneur (pour docker ps, logs, etc.)
+    # ports: mapper port de la machine -> port du conteneur
+    ports:
+      - "8080:80"                    # localhost:8080 -> conteneur:80
+    volumes:
+      - ../config/apache:/etc/apache2/sites-available-templates:z
+    # depends_on: démarrer ce service APRÈS db
+    depends_on:
+      - db
+    # networks: connecter ce conteneur au réseau 'sae_network'
+    networks:
+      - sae_network
+    # restart: redémarrer automatiquement sauf si arrêt manuel
+    restart: unless-stopped
+
+  # Base de données PostgreSQL avec pgvector
+  db:
+    # build: construire une image custom avec pgvector
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile.postgres
+    container_name: sae_postgres
+    ports:
+      - "5432:5432"                  # Exposer PostgreSQL sur localhost:5432
+    environment:
+      # Variables requises par l'image postgres pour l'initialisation
+      - POSTGRES_DB=${POSTGRES_DB:-sae_database}
+      - POSTGRES_USER=${POSTGRES_USER:-sae_user}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-sae_password}
+    volumes:
+      # Volume nommé pour persister les données (survit à docker-compose down)
+      - postgres-data:/var/lib/postgresql/data
+    networks:
+      - sae_network
+    restart: unless-stopped
+
+  # Adminer pour gérer la base de données (interface web)
+  adminer:
+    image: docker.io/library/adminer:latest            # Image officielle Adminer
+    container_name: sae_adminer
+    ports:
+      - "8082:8080"                  # Adminer écoute sur 8080, on le map sur 8082
+    environment:
+      - ADMINER_DEFAULT_SERVER=db    # Pré-remplir le serveur avec 'db'
+      - ADMINER_DESIGN=pepa-linha    # Thème visuel
+    depends_on:
+      - db                           # Démarrer après PostgreSQL
+    networks:
+      - sae_network
+    restart: unless-stopped
+    command: php -S 0.0.0.0:8080 -t /var/www/html
+
+  # Embeddings Python service (Flask) - provides create_embedding_text API
+  embeddings:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile.embeddings
+    container_name: sae_embeddings
+    ports:
+      - "5000:5000"
+    environment:
+      - MODEL_NAME=paraphrase-multilingual-MiniLM-L12-v2
+      - DB_HOST=db
+      - DB_USER=${POSTGRES_USER:-sae_user}
+      - DB_PASSWORD=${POSTGRES_PASSWORD:-sae_password}
+      - DB_NAME=${POSTGRES_DB:-sae_database}
+    depends_on:
+      - db
+    networks:
+      - sae_network
+    restart: unless-stopped
+    volumes:
+      - embeddings-cache:/opt/hf_cache
+
+# Réseau virtuel pour que les conteneurs communiquent entre eux
+networks:
+  sae_network:
+    driver: bridge                   # Type de réseau (bridge = réseau isolé local)
+
+# Volumes nommés pour persister les données (survit à docker-compose down)
+volumes:
+  postgres-data:
+    driver: local                    # Stockage local sur la machine hôte
+  embeddings-cache:
+    driver: local

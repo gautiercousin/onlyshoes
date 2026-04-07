@@ -1,0 +1,16 @@
+# FROM: utiliser l'image officielle pgvector (basée sur PostgreSQL 17)
+# Cette image a déjà pgvector pré-compilé et installé
+FROM docker.io/pgvector/pgvector:pg17
+
+# pgvector est déjà installé dans cette image!
+# L'extension sera disponible, mais pas activée par défaut
+# Pour l'activer dans une base : CREATE EXTENSION vector;
+
+# Copier les scripts SQL d'initialisation (executés au premier démarrage)
+COPY database/startup/ /docker-entrypoint-initdb.d/
+# Copier les scripts utilitaires (exécutés manuellement)
+COPY database/scripts/ /docker-entrypoint-initdb.d/scripts/
+
+# FIX: Set proper permissions for init scripts
+RUN chmod -R 755 /docker-entrypoint-initdb.d && \
+    find /docker-entrypoint-initdb.d -type f -exec chmod 644 {} \;

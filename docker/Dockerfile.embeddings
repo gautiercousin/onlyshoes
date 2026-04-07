@@ -1,0 +1,13 @@
+FROM docker.io/library/python:3.11-slim
+
+WORKDIR /app
+
+# Install requirements first (cached layer)
+COPY embeddings/requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Copy app code
+COPY embeddings/ .
+
+EXPOSE 5000
+CMD ["python3", "app.py"]

@@ -1,0 +1,17 @@
+=== Concurrent Load Test ===
+Test Date: Thu Jan 15 04:14:25 PM CET 2026
+
+--- 50 Concurrent Requests to / ---
+Min: 0.048869s
+Max: 0.290030s
+Avg: 0.1670s
+
+--- 100 Concurrent Requests to /annonces ---
+Min: 0.003597s
+Max: 0.085263s
+Avg: 0.0256s
+
+--- 50 Concurrent Requests to /recherche?q=nike (semantic search) ---
+Min: 0.365275s
+Max: 2.146222s
+Avg: 1.2788s

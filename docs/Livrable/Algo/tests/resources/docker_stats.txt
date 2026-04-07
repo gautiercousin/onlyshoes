@@ -1,0 +1,20 @@
+=== Docker Resource Usage (Post-Load Test) ===
+Test Date: Thu Jan 15 04:16:09 PM CET 2026
+
+NAME             CPU %     MEM USAGE / LIMIT    MEM %     NET I/O           BLOCK I/O
+sae_web          0.00%     66.98MiB / 7.45GiB   0.88%     3.63MB / 26.8MB   14.3MB / 41.1MB
+sae_adminer      0.00%     11.34MiB / 7.45GiB   0.15%     1.97kB / 0B       63.1MB / 0B
+sae_embeddings   0.03%     872MiB / 7.45GiB     11.43%    457MB / 3.38MB    904MB / 481MB
+sae_postgres     0.00%     42.76MiB / 7.45GiB   0.56%     2.06MB / 2.06MB   140MB / 1.04MB
+
+=== Container Details ===
+NAMES            IMAGE               STATUS          PORTS
+sae_web          docker-web          Up 5 minutes    0.0.0.0:8080->80/tcp, [::]:8080->80/tcp
+sae_adminer      adminer:latest      Up 11 minutes   0.0.0.0:8082->8080/tcp, [::]:8082->8080/tcp
+sae_embeddings   docker-embeddings   Up 11 minutes   0.0.0.0:5000->5000/tcp, :::5000->5000/tcp
+sae_postgres     docker-db           Up 11 minutes   0.0.0.0:5432->5432/tcp, :::5432->5432/tcp
+
+=== Host System Resources ===
+CPU cores: 4
+Total RAM: 7.4Gi
+Available RAM: 2.5Gi

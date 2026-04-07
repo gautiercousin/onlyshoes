@@ -1,0 +1,50 @@
+=== Database Size Analysis ===
+Test Date: Thu Jan 15 04:11:44 PM CET 2026
+
+ database_size 
+---------------
+ 8779 kB
+(1 row)
+
+
+=== Table Sizes ===
+           table_name            | total_size | table_size | index_size 
+---------------------------------+------------+------------+------------
+ public.annonce                  | 72 kB      | 24 kB      | 16 kB
+ public.signalement              | 64 kB      | 16 kB      | 16 kB
+ public.utilisateur              | 48 kB      | 8192 bytes | 32 kB
+ public.marque                   | 40 kB      | 8192 bytes | 32 kB
+ public.couleur                  | 40 kB      | 8192 bytes | 32 kB
+ public.commande                 | 40 kB      | 8192 bytes | 32 kB
+ public.materiau                 | 40 kB      | 8192 bytes | 32 kB
+ public.adresse                  | 32 kB      | 8192 bytes | 16 kB
+ public.admin_log                | 32 kB      | 8192 bytes | 16 kB
+ public.review                   | 32 kB      | 8192 bytes | 16 kB
+ public.image                    | 32 kB      | 8192 bytes | 16 kB
+ public.consentement_utilisateur | 24 kB      | 8192 bytes | 16 kB
+ public.paiement                 | 24 kB      | 8192 bytes | 16 kB
+ public.detailler_commande       | 24 kB      | 8192 bytes | 16 kB
+ public.ligne_commande           | 24 kB      | 8192 bytes | 16 kB
+(15 rows)
+
+
+=== Index Usage Stats ===
+        index_name        |     table_name     | times_used | index_size 
+--------------------------+--------------------+------------+------------
+ annonce_pkey             | annonce            |        832 | 16 kB
+ detailler_commande_pkey  | detailler_commande |        674 | 16 kB
+ commande_id_paiement_key | commande           |        633 | 16 kB
+ utilisateur_pkey         | utilisateur        |        335 | 16 kB
+ commande_pkey            | commande           |         84 | 16 kB
+ couleur_pkey             | couleur            |         69 | 16 kB
+ materiau_pkey            | materiau           |         69 | 16 kB
+ marque_pkey              | marque             |         69 | 16 kB
+ image_pkey               | image              |         69 | 16 kB
+ paiement_pkey            | paiement           |         59 | 16 kB
+ ligne_commande_pkey      | ligne_commande     |         28 | 16 kB
+ review_pkey              | review             |         14 | 16 kB
+ materiau_nom_key         | materiau           |          0 | 16 kB
+ couleur_nom_key          | couleur            |          0 | 16 kB
+ signalement_pkey         | signalement        |          0 | 16 kB
+(15 rows)
+
